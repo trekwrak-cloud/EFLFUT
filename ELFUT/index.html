@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ELFUT V4 - Edition</title>
+    <style>
+        :root {
+            --ps-dark: #0a0a0a;
+            --ps-card: #151515;
+            --ps-blue: #006ae3;
+            --btn-grey: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        body {
+            background: #000;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .top-nav {
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111;
+        }
+
+        .conn-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        .sys-btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .usb-btn { background: #333; color: #fff; }
+        .bt-btn { background: var(--ps-blue); color: #fff; }
+
+        .main-view {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .controller {
+            width: 760px;
+            height: 400px;
+            background: var(--ps-card);
+            border-radius: 80px 80px 120px 120px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            padding: 50px 80px;
+            border: 1px solid #222;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        .cluster {
+            display: grid;
+            grid-template-columns: repeat(3, 48px);
+            grid-template-rows: repeat(3, 48px);
+            gap: 6px;
+        }
+
+        .k-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--btn-grey);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #000;
+        }
+
+        .k-btn:active, .k-btn.active { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
+
+        .t { color: #27ae60; grid-column: 2; }
+        .s { color: #8e44ad; grid-row: 2; grid-column: 1; }
+        .c { color: #c0392b; grid-row: 2; grid-column: 3; }
+        .x { color: #2980b9; grid-row: 3; grid-column: 2; }
+
+        .analog-base {
+            width: 110px;
+            height: 110px;
+            background: #000;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 10px #222;
+        }
+
+        #l-base { left: 250px; }
+        #r-base { right: 250px; }
+
+        .knob {
+            width: 65px;
+            height: 65px;
+            background: radial-gradient(circle, #444, #111);
+            border-radius: 50%;
+            box-shadow: 0 5px 15px #000;
+            cursor: pointer;
+        }
+
+        .brand {
+            position: absolute;
+            bottom: 25px;
+            right: 60px;
+            font-size: 18px; /* FONT BÜYÜTÜLDÜ */
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: #ff4757;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .stop-pill {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff4757;
+            border: none;
+            padding: 10px 40px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 900;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <div style="font-size: 12px; opacity: 0.6;">ELFUT V4 MOBILE</div>
+    <div class="conn-btns">
+        <button class="sys-btn usb-btn" onclick="initUSB()">💻 USB SEÇ</button>
+        <button class="sys-btn bt-btn" onclick="initBT()">🔵 BLUETOOTH</button>
+    </div>
+</div>
+
+<div class="main-view">
+    <div class="controller">
+        <button class="stop-pill" onclick="send('STOP')">STOP</button>
+        
+        <div class="cluster">
+            <div id="btn-UP" class="k-btn" style="grid-column: 2;" onpointerdown="send('UP')">↑</div>
+            <div id="btn-LEFT" class="k-btn" style="grid-row: 2; grid-column: 1;" onpointerdown="send('LEFT')">←</div>
+            <div id="btn-RIGHT" class="k-btn" style="grid-row: 2; grid-column: 3;" onpointerdown="send('RIGHT')">→</div>
+            <div id="btn-DOWN" class="k-btn" style="grid-row: 3; grid-column: 2;" onpointerdown="send('DOWN')">↓</div>
+        </div>
+
+        <div class="analog-base" id="l-base">
+            <div class="knob" id="k-l"></div>
+        </div>
+        <div class="analog-base" id="r-base">
+            <div class="knob" id="k-r"></div>
+        </div>
+
+        <div class="cluster">
+            <div class="k-btn t" onpointerdown="send('TRI')">△</div>
+            <div class="k-btn s" onpointerdown="send('SQR')">□</div>
+            <div class="k-btn c" onpointerdown="send('CRC')">○</div>
+            <div class="k-btn x" onpointerdown="send('CRS')">✕</div>
+        </div>
+
+        <div class="brand">EFLFUT</div>
+    </div>
+</div>
+
+<script>
+    let port, writer;
+
+    async function initUSB() {
+        try {
+            port = await navigator.serial.requestPort();
+            await port.open({ baudRate: 115200 });
+            writer = port.writable.getWriter();
+            alert("USB Bağlandı! ✅");
+        } catch (e) { alert("Hata: " + e.message); }
+    }
+
+    async function initBT() {
+        try {
+            const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+            alert(device.name + " Seçildi! 🔵");
+        } catch (e) { console.error(e); }
+    }
+
+    async function send(data) {
+        if (writer) {
+            try {
+                const encoder = new TextEncoder();
+                await writer.write(encoder.encode(data + "\n"));
+            } catch (e) { console.error(e); }
+        }
+    }
+
+    // KLAVYE (WASD & OK TUŞLARI) KONTROLÜ
+    const keyMap = {
+        'w': 'UP', 'W': 'UP', 'ArrowUp': 'UP',
+        'a': 'LEFT', 'A': 'LEFT', 'ArrowLeft': 'LEFT',
+        's': 'DOWN', 'S': 'DOWN', 'ArrowDown': 'DOWN',
+        'd': 'RIGHT', 'D': 'RIGHT', 'ArrowRight': 'RIGHT',
+        ' ': 'STOP'
+    };
+
+    window.addEventListener('keydown', (e) => {
+        const cmd = keyMap[e.key];
+        if (cmd) {
+            const btn = document.getElementById('btn-' + cmd);
+            if (btn) btn.classList.add('active');
+            send(cmd);
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        const cmd = keyMap[e.key];
+        if (cmd) {
+            const btn = document.getElementById('btn-' + cmd);
+            if (btn) btn.classList.remove('active');
+        }
+    });
+
+    function setupJoy(knobId, baseId, prefix) {
+        const knob = document.getElementById(knobId);
+        const base = document.getElementById(baseId);
+        let active = false;
+
+        const move = (e) => {
+            if (!active) return;
+            const p = e.touches ? e.touches[0] : e;
+            const r = base.getBoundingClientRect();
+            let x = p.clientX - (r.left + r.width / 2);
+            let y = p.clientY - (r.top + r.height / 2);
+            const limit = 28;
+            const d = Math.sqrt(x*x + y*y);
+            if (d > limit) { x *= limit/d; y *= limit/d; }
+            knob.style.transform = `translate(${x}px, ${y}px)`;
+            send(`${prefix}:${Math.round(x)},${Math.round(y)}`);
+        };
+
+        const end = () => {
+            if (!active) return;
+            active = false;
+            knob.style.transform = 'translate(0,0)';
+            knob.style.transition = '0.15s';
+            send(`${prefix}:0,0`);
+        };
+
+        knob.addEventListener('mousedown', () => { active = true; knob.style.transition = 'none'; });
+        knob.addEventListener('touchstart', (e) => { active = true; knob.style.transition = 'none'; e.preventDefault(); }, {passive: false});
+        window.addEventListener('mousemove', move);
+        window.addEventListener('touchmove', move, {passive: false});
+        window.addEventListener('mouseup', end);
+        window.addEventListener('touchend', end);
+    }
+
+    setupJoy('k-l', 'l-base', 'L');
+    setupJoy('k-r', 'r-base', 'R');
+</script>
+
+</body>
+</html>
